@@ -1,6 +1,5 @@
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
-import { useState } from "react";
 import instagramLogo from './Logos/instagram_logo.jpg'; // Import the image
 
 export default function MonthlyTargetIG() {
