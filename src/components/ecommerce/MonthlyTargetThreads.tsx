@@ -1,10 +1,8 @@
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import { useState } from "react";
-import { Dropdown } from "../ui/dropdown/Dropdown";
-import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import threadsLogo from './Logos/threads_logo.jpg'; // Import the image
-import { MoreDotIcon } from "../../icons";
+
 
 export default function MonthlyTargetThreads() {
   const series = [75.55];
@@ -55,15 +53,6 @@ export default function MonthlyTargetThreads() {
     },
     labels: ["Progress"],
   };
-  const [isOpen, setIsOpen] = useState(false);
-
-  function toggleDropdown() {
-    setIsOpen(!isOpen);
-  }
-
-  function closeDropdown() {
-    setIsOpen(false);
-  }
   return (
     <div className="rounded-2xl border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-white/[0.03]">
       <div className="px-5 pt-5 bg-white shadow-default rounded-2xl pb-11 dark:bg-gray-900 sm:px-6 sm:pt-6">
