@@ -1,6 +1,5 @@
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
-import { useState } from "react";
 import threadsLogo from './Logos/threads_logo.jpg'; // Import the image
 
 
