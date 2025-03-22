@@ -1,45 +1,155 @@
-
 <template>
-    <div class="card mb-25 border-0 rounded-0 welcome-box">
-      <div class="card-body pe-15 pe-sm-20 pe-md-0 pb-0 pt-15 pt-sm-20">
-        <div class="row align-items-center">
-          <div class="col-lg-6 col-md-6">
-            <div class="title position-relative">
-              <h3 class="fw-semibold mb-8">
-                <img src="../../../assets/images/3d-images/instagram.png" alt="welcome-image" width="100" height="100" />
-                Instagram Page 
-              </h3>
-              <span class="d-block text-black-emphasis fs-md-15 fs-lg-16">
-                Here’s what happening with your Instagram page today
-              </span>
-            </div>
-            <ul class="ps-0 mb-0 list-unstyled grid-list">
-              <li class="d-inline-block text-uppercase fw-medium fs-13 text-black-emphasis position-relative me-3 mb-3">
-                Total Posts
-                <span class="d-block fw-black lh-1 text-black mt-2 mt-md-10">
-                  15,209
-                </span>
-              </li>
-              <li class="d-inline-block text-uppercase fw-medium fs-13 text-black-emphasis position-relative me-3 mb-3">
-                Followers
-                <span class="d-block fw-black lh-1 text-black mt-2 mt-md-10">
-                  29,115
-                </span>
-              </li>
-              <li class="d-inline-block text-uppercase fw-medium fs-13 text-black-emphasis position-relative me-3 mb-3">
-                Following
-                <span class="d-block fw-black lh-1 text-black mt-2 mt-md-10">
-                  29,115
-                </span>
-              </li>
-            </ul>
-          </div>
-          <div class="col-lg-6 col-md-6 text-center mt-15 mt-md-0">
-            <h3 class="fw-semibold"> Talent Quest</h3>
-            <img src="../../../assets/images/3d-images/instagram.png" alt="welcome-image" width="240" height="240" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </template>
-  
+  <div class="row">
+    <div class="col-12 d-flex justify-content-end">
+      <button @click="loginIg" class="btn btn-primary link-account-btn">Link Instagram Account</button>
+    </div>
+    <div class="col-xxl-7 col-xxxl-6">
+      <Instahappen />
+
+      <div class="row">
+        <div class="col-lg-6 col-xxxl-6 col-md-6">
+          <ExpectedEarnings />
+        </div>
+        <div class="col-lg-6 col-xxxl-6 col-md-6">
+          <ExpectedEarnings2 />
+        </div>
+        <div class="col-xl-12 col-lg-6 col-xxxl-6 col-md-12">
+          <RevenueThisMonth />
+        </div>
+        <div class="col-xl-12 col-lg-6 col-xxxl-6 col-md-12">
+          <NewCustomersThisMonth />
+        </div>
+      </div>
+    </div>
+    <div class="col-xxl-5 col-xxxl-6">
+      <StatsBoxes />
+
+      <WeeklySales />
+    </div>
+    <div class="d-flex gap-5">
+      <div class="">
+        <RevenueTargetByCountry />
+      </div>
+      <div class="">
+        <div class="d-flex flex-column gap-3">
+          <div class="d-flex justify-content-between">
+            <NewCustomersThisMonth2 />
+            <NewCustomersThisMonth3 />
+          </div>
+          <DataBoxes />
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <ProjectStats />
+    </div>
+    <div>
+      <h4>Comment & Messages</h4>
+      <ChatContent />
+    </div>
+  </div>
+</template>
+
+<script>
+/* eslint-disable no-undef */
+import { defineComponent } from "vue";
+
+import Instahappen from "../../components/Dashboard/Ecommerce/instagramhappen.vue";
+
+import ExpectedEarnings from "../../components/Dashboard/Ecommerce/ExpectedEarnings.vue";
+
+import ExpectedEarnings2 from "../../components/Dashboard/Ecommerce/ExpectedEarnings2.vue";
+
+import RevenueThisMonth from "../../components/Dashboard/Ecommerce/RevenueThisMonth.vue";
+
+import RevenueTargetByCountry from "../../components/Dashboard/CRMSystem/RevenueTargetByCountry/index.vue";
+
+import ProjectStats from "../../components/Dashboard/ProjectManagement/ProjectStats/index.vue";
+
+import NewCustomersThisMonth from "../../components/Dashboard/Ecommerce/NewCustomersThisMonth.vue";
+
+import NewCustomersThisMonth2 from "../../components/Dashboard/Ecommerce/NewCustomersThisMonth2.vue";
+
+import NewCustomersThisMonth3 from "../../components/Dashboard/Ecommerce/NewCustomersThisMonth3.vue";
+
+import StatsBoxes from "../../components/Dashboard/Ecommerce/StatsBoxes/index.vue";
+
+import DataBoxes from "../../components/Dashboard/Ecommerce/StatsBoxes/data.vue";
+
+import WeeklySales from "../../components/Dashboard/Ecommerce/WeeklySales.vue";
+
+import ChatContent from "../../components/Chat/ChatContent.vue";
+
+import axios from 'axios'
+
+export default defineComponent({
+  name: "InstaCommerce",
+  components: {
+    Instahappen,
+    ExpectedEarnings,
+    ExpectedEarnings2,
+    RevenueThisMonth,
+    RevenueTargetByCountry,
+    NewCustomersThisMonth,
+    NewCustomersThisMonth2,
+    NewCustomersThisMonth3,
+    StatsBoxes,
+    WeeklySales,
+    ProjectStats,
+    ChatContent,
+    DataBoxes,
+  },
+  data() {
+    return {
+      showOnboarding: false,
+      accessToken: null,
+    };
+  },
+  methods: {
+    loginIg() {
+      axios.get('https://skyestudio-backend.onrender.com/auth/login-ig')
+        .then(response => {
+          window.location.href = response.data.redirectURL;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+
+    getAccessToken() {
+      const url = new URL(window.location.href);
+      const code = url.searchParams.get('code');
+      if (code) {
+        axios.get(`https://skyestudio-backend.onrender.com/auth/callback?code=${code}`)
+          .then(response => {
+            const accessToken = response.data.access_token;
+            const userId = response.data.user.id;
+            const userName = response.data.user.username;
+            this.accessToken = accessToken;
+            this.userId = userId;
+            this.userName = userName;
+            // Save access token and user id in local storage
+            localStorage.setItem('igAccessToken', accessToken);
+            localStorage.setItem('igUserId', userId);
+            localStorage.setItem('IgUsername', userName);
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      }
+    },
+  },
+
+  mounted() {
+    this.getAccessToken();
+   }
+});
+</script>
+<style scoped>
+/* Button styling */
+.link-account-btn {
+  margin-bottom: 20px;
+  margin-left: 20px;
+}
+</style>
