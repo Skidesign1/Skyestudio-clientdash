@@ -11,9 +11,11 @@ import Badge from "../ui/badge/Badge";
 interface Product {
   id: number; // Unique identifier for each product
   name: string; // Product name
-  variants: string; // Number of variants (e.g., "1 Variant", "2 Variants")
-  category: string; // Category of the product
-  price: string; // Price of the product (as a string with currency symbol)
+  views: string; // Number of variants (e.g., "1 Variant", "2 Variants")
+  likes: number;
+  share: number;
+  comment: string; // Category of the product
+  date: string; // Price of the product (as a string with currency symbol)
   // status: string; // Status of the product
   image: string; // URL or path to the product image
   status: "Delivered" | "Pending" | "Canceled"; // Status of the product
@@ -24,47 +26,57 @@ const tableData: Product[] = [
   {
     id: 1,
     name: "MacBook Pro 13”",
-    variants: "2 Variants",
-    category: "Laptop",
-    price: "$2399.00",
+    views: " views",
+    likes: 24,
+    share: 5,
+    comment: "Great performance!",
+    date: "2023-10-15",
     status: "Delivered",
-    image: "/images/product/product-01.jpg", // Replace with actual image URL
+    image: "/images/product/product-01.jpg",
   },
   {
     id: 2,
     name: "Apple Watch Ultra",
-    variants: "1 Variant",
-    category: "Watch",
-    price: "$879.00",
+    views: "1 views",
+    likes: 18,
+    share: 3,
+    comment: "Excellent battery life",
+    date: "2023-11-02",
     status: "Pending",
-    image: "/images/product/product-02.jpg", // Replace with actual image URL
+    image: "/images/product/product-02.jpg",
   },
   {
     id: 3,
     name: "iPhone 15 Pro Max",
-    variants: "2 Variants",
-    category: "SmartPhone",
-    price: "$1869.00",
+    views: "2 views",
+    likes: 42,
+    share: 12,
+    comment: "Amazing camera quality",
+    date: "2023-09-28",
     status: "Delivered",
-    image: "/images/product/product-03.jpg", // Replace with actual image URL
+    image: "/images/product/product-03.jpg",
   },
   {
     id: 4,
     name: "iPad Pro 3rd Gen",
-    variants: "2 Variants",
-    category: "Electronics",
-    price: "$1699.00",
+    views: "2 views",
+    likes: 15,
+    share: 2,
+    comment: "Perfect for digital artists",
+    date: "2023-08-17",
     status: "Canceled",
-    image: "/images/product/product-04.jpg", // Replace with actual image URL
+    image: "/images/product/product-04.jpg",
   },
   {
     id: 5,
     name: "AirPods Pro 2nd Gen",
-    variants: "1 Variant",
-    category: "Accessories",
-    price: "$240.00",
+    views: "1 views",
+    likes: 30,
+    share: 8,
+    comment: "Best noise cancellation",
+    date: "2023-12-05",
     status: "Delivered",
-    image: "/images/product/product-05.jpg", // Replace with actual image URL
+    image: "/images/product/product-05.jpg",
   },
 ];
 
@@ -74,7 +86,7 @@ export default function RecentOrders() {
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-            Recent Orders
+            Post
           </h3>
         </div>
 
@@ -137,13 +149,25 @@ export default function RecentOrders() {
                 isHeader
                 className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Category
+                Like
               </TableCell>
               <TableCell
                 isHeader
                 className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Price
+                Share
+              </TableCell>
+              <TableCell
+                isHeader
+                className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+              >
+                Comment
+              </TableCell>
+              <TableCell
+                isHeader
+                className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+              >
+                Date
               </TableCell>
               <TableCell
                 isHeader
@@ -173,16 +197,22 @@ export default function RecentOrders() {
                         {product.name}
                       </p>
                       <span className="text-gray-500 text-theme-xs dark:text-gray-400">
-                        {product.variants}
+                        {product.views}
                       </span>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                  {product.price}
+                  {product.likes}
                 </TableCell>
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                  {product.category}
+                  {product.share}
+                </TableCell>
+                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                  {product.comment}
+                </TableCell>
+                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                  {product.date}
                 </TableCell>
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                   <Badge
@@ -203,6 +233,7 @@ export default function RecentOrders() {
           </TableBody>
         </Table>
       </div>
+      
     </div>
   );
 }

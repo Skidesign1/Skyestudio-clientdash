@@ -18,9 +18,11 @@ import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
-import MonthlyTargetIG from "./components/ecommerce/MonthlyTargetIG";
-import MonthlyTargetTikTok from "./components/ecommerce/MonthlyTargetTikTok";
-import MonthlyTargetThreads from "./components/ecommerce/MonthlyTargetThreads";
+// import MonthlyTargetIG from "./components/ecommerce/MonthlyTargetIG";
+// import MonthlyTargetTikTok from "./components/ecommerce/MonthlyTargetTikTok";
+// import MonthlyTargetThreads from "./components/ecommerce/MonthlyTargetThreads";
+import Onboading from "./pages/AuthPages/Onboarding";
+import MonthlyTarget from "./components/ecommerce/MonthlyTarget";
 
 export default function App() {
   return (
@@ -33,17 +35,17 @@ export default function App() {
             <Route
               index
               path="/dashboard/IG"
-              element={<Home>{<MonthlyTargetIG />}</Home>}
+              element={<Home>{<MonthlyTarget/>}</Home>}
             />
             <Route
               index
               path="/dashboard/TikTok"
-              element={<Home>{<MonthlyTargetTikTok />}</Home>}
+              element={<Home>{<MonthlyTarget />}</Home>}
             />
             <Route
               index
               path="/dashboard/Threads"
-              element={<Home>{<MonthlyTargetThreads />}</Home>}
+              element={<Home>{<MonthlyTarget />}</Home>}
             />
 
             {/* Others Page */}
@@ -73,6 +75,7 @@ export default function App() {
           {/* Auth Layout */}
           <Route path="/" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/onboarding" element={<Onboading/>} />
 
           {/* Fallback Route */}
           <Route path="*" element={<NotFound />} />

@@ -11,14 +11,28 @@ import PageMeta from "../components/common/PageMeta";
 interface CalendarEvent extends EventInput {
   extendedProps: {
     calendar: string;
+    postDetails: string;
+    postChannel: string;
+    publishNow: boolean;
+    scheduleDate?: string;
+    commentToDm: boolean;
+    comment?: string;
+    replyToComment?: string;
+    media?: File[];
   };
 }
 
 const Calendar: React.FC = () => {
-  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
-    null
-  );
-  const [eventTitle, setEventTitle] = useState("");
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+  const [postTitle, setPostTitle] = useState("");
+  const [postDetails, setPostDetails] = useState("");
+  const [postChannel, setPostChannel] = useState("");
+  const [publishNow, setPublishNow] = useState(true);
+  const [scheduleDate, setScheduleDate] = useState("");
+  const [commentToDm, setCommentToDm] = useState(false);
+  const [comment, setComment] = useState("");
+  const [replyToComment, setReplyToComment] = useState("");
+  const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [eventStartDate, setEventStartDate] = useState("");
   const [eventEndDate, setEventEndDate] = useState("");
   const [eventLevel, setEventLevel] = useState("");
@@ -26,6 +40,7 @@ const Calendar: React.FC = () => {
   const calendarRef = useRef<FullCalendar>(null);
   const { isOpen, openModal, closeModal } = useModal();
 
+  const channels = ["Instagram", "Facebook", "Twitter", "LinkedIn", "TikTok"];
   const calendarsEvents = {
     Danger: "danger",
     Success: "success",
@@ -40,20 +55,28 @@ const Calendar: React.FC = () => {
         id: "1",
         title: "Event Conf.",
         start: new Date().toISOString().split("T")[0],
-        extendedProps: { calendar: "Danger" },
+        extendedProps: { 
+          calendar: "Danger",
+          postDetails: "Conference details",
+          postChannel: "Instagram",
+          publishNow: false,
+          scheduleDate: new Date(Date.now() + 86400000).toISOString(),
+          commentToDm: true,
+          comment: "Please DM for details",
+          replyToComment: "Will do!"
+        },
       },
       {
         id: "2",
         title: "Meeting",
         start: new Date(Date.now() + 86400000).toISOString().split("T")[0],
-        extendedProps: { calendar: "Success" },
-      },
-      {
-        id: "3",
-        title: "Workshop",
-        start: new Date(Date.now() + 172800000).toISOString().split("T")[0],
-        end: new Date(Date.now() + 259200000).toISOString().split("T")[0],
-        extendedProps: { calendar: "Primary" },
+        extendedProps: { 
+          calendar: "Success",
+          postDetails: "Team meeting",
+          postChannel: "Twitter",
+          publishNow: true,
+          commentToDm: false
+        },
       },
     ]);
   }, []);
@@ -68,7 +91,14 @@ const Calendar: React.FC = () => {
   const handleEventClick = (clickInfo: EventClickArg) => {
     const event = clickInfo.event;
     setSelectedEvent(event as unknown as CalendarEvent);
-    setEventTitle(event.title);
+    setPostTitle(event.title);
+    setPostDetails(event.extendedProps.postDetails || "");
+    setPostChannel(event.extendedProps.postChannel || "");
+    setPublishNow(event.extendedProps.publishNow ?? true);
+    setScheduleDate(event.extendedProps.scheduleDate || "");
+    setCommentToDm(event.extendedProps.commentToDm || false);
+    setComment(event.extendedProps.comment || "");
+    setReplyToComment(event.extendedProps.replyToComment || "");
     setEventStartDate(event.start?.toISOString().split("T")[0] || "");
     setEventEndDate(event.end?.toISOString().split("T")[0] || "");
     setEventLevel(event.extendedProps.calendar);
@@ -83,10 +113,20 @@ const Calendar: React.FC = () => {
           event.id === selectedEvent.id
             ? {
                 ...event,
-                title: eventTitle,
+                title: postTitle,
                 start: eventStartDate,
                 end: eventEndDate,
-                extendedProps: { calendar: eventLevel },
+                extendedProps: { 
+                  calendar: eventLevel,
+                  postDetails,
+                  postChannel,
+                  publishNow,
+                  scheduleDate: publishNow ? undefined : scheduleDate,
+                  commentToDm,
+                  comment: commentToDm ? comment : undefined,
+                  replyToComment: commentToDm ? replyToComment : undefined,
+                  media: mediaFiles.length > 0 ? mediaFiles : undefined
+                },
               }
             : event
         )
@@ -95,11 +135,21 @@ const Calendar: React.FC = () => {
       // Add new event
       const newEvent: CalendarEvent = {
         id: Date.now().toString(),
-        title: eventTitle,
+        title: postTitle,
         start: eventStartDate,
         end: eventEndDate,
         allDay: true,
-        extendedProps: { calendar: eventLevel },
+        extendedProps: { 
+          calendar: eventLevel,
+          postDetails,
+          postChannel,
+          publishNow,
+          scheduleDate: publishNow ? undefined : scheduleDate,
+          commentToDm,
+          comment: commentToDm ? comment : undefined,
+          replyToComment: commentToDm ? replyToComment : undefined,
+          media: mediaFiles.length > 0 ? mediaFiles : undefined
+        },
       };
       setEvents((prevEvents) => [...prevEvents, newEvent]);
     }
@@ -107,8 +157,27 @@ const Calendar: React.FC = () => {
     resetModalFields();
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files);
+      setMediaFiles(prev => [...prev, ...files]);
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setMediaFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
   const resetModalFields = () => {
-    setEventTitle("");
+    setPostTitle("");
+    setPostDetails("");
+    setPostChannel("");
+    setPublishNow(true);
+    setScheduleDate("");
+    setCommentToDm(false);
+    setComment("");
+    setReplyToComment("");
+    setMediaFiles([]);
     setEventStartDate("");
     setEventEndDate("");
     setEventLevel("");
@@ -121,7 +190,7 @@ const Calendar: React.FC = () => {
         title="React.js Calendar Dashboard | TailAdmin - Next.js Admin Dashboard Template"
         description="This is React.js Calendar Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
       />
-      <div className="rounded-2xl border  border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+      <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
         <div className="custom-calendar">
           <FullCalendar
             ref={calendarRef}
@@ -148,7 +217,7 @@ const Calendar: React.FC = () => {
         <Modal
           isOpen={isOpen}
           onClose={closeModal}
-          className="max-w-[700px] p-6 lg:p-10"
+          className="max-w-[700px] p-6 lg:p-10 "
         >
           <div className="flex flex-col px-2 overflow-y-auto custom-scrollbar">
             <div>
@@ -160,31 +229,204 @@ const Calendar: React.FC = () => {
                 track
               </p>
             </div>
-            <div className="mt-8">
+            <div className="mt-8 space-y-6">
+              {/* Post Title */}
               <div>
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                    Event Title
-                  </label>
-                  <input
-                    id="event-title"
-                    type="text"
-                    value={eventTitle}
-                    onChange={(e) => setEventTitle(e.target.value)}
-                    className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                  />
-                </div>
+                <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                  Post Title *
+                </label>
+                <input
+                  id="event-title"
+                  type="text"
+                  value={postTitle}
+                  onChange={(e) => setPostTitle(e.target.value)}
+                  className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                  required
+                />
               </div>
-              <div className="mt-6">
+
+              {/* Post Details */}
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                  Post Details *
+                </label>
+                <textarea
+                  id="event-details"
+                  value={postDetails}
+                  onChange={(e) => setPostDetails(e.target.value)}
+                  className="dark:bg-dark-900 min-h-[100px] w-full resize-none rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                  required
+  
+                />
+              </div>
+
+              {/* Post Channel */}
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                  Post Channel *
+                </label>
+                <select
+                  value={postChannel}
+                  onChange={(e) => setPostChannel(e.target.value)}
+                  className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                  required
+                >
+                  <option value="">Select a channel</option>
+                  {channels.map(channel => (
+                    <option key={channel} value={channel}>{channel}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Upload Images/Videos */}
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                  Upload Images/Videos
+                </label>
+                <div className="flex items-center gap-4">
+                  <label className="cursor-pointer">
+                    <span className="flex items-center justify-center h-11 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700 dark:hover:bg-white/[0.03]">
+                      Choose Files
+                      <input 
+                        type="file" 
+                        className="hidden" 
+                        multiple 
+                        accept="image/*,video/*"
+                        onChange={handleFileUpload}
+                      />
+                    </span>
+                  </label>
+                  {mediaFiles.length > 0 && (
+                    <span className="text-sm text-gray-500">
+                      {mediaFiles.length} file(s) selected
+                    </span>
+                  )}
+                </div>
+                {mediaFiles.length > 0 && (
+                  <div className="mt-2 space-y-2">
+                    {mediaFiles.map((file, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-gray-100 rounded dark:bg-gray-800">
+                        <span className="text-sm truncate">{file.name}</span>
+                        <button 
+                          type="button" 
+                          onClick={() => removeFile(index)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Publish Now */}
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                  Publish Now
+                </label>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="publishNow"
+                      checked={publishNow}
+                      onChange={() => setPublishNow(true)}
+                      className="mr-2"
+                    />
+                    Yes
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="publishNow"
+                      checked={!publishNow}
+                      onChange={() => setPublishNow(false)}
+                      className="mr-2"
+                    />
+                    No
+                  </label>
+                </div>
+                {!publishNow && (
+                  <div className="mt-4">
+                    <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                      Schedule Post
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={scheduleDate}
+                      onChange={(e) => setScheduleDate(e.target.value)}
+                      className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                      required={!publishNow}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Comment to DM */}
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                  Comment to DM
+                </label>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="commentToDm"
+                      checked={commentToDm}
+                      onChange={() => setCommentToDm(true)}
+                      className="mr-2"
+                    />
+                    Yes
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="commentToDm"
+                      checked={!commentToDm}
+                      onChange={() => setCommentToDm(false)}
+                      className="mr-2"
+                    />
+                    No
+                  </label>
+                </div>
+                {commentToDm && (
+                  <div className="mt-4 space-y-4">
+                    <div>
+                      <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                        Comment
+                      </label>
+                      <input
+                        type="text"
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                        Reply to Comment
+                      </label>
+                      <input
+                        type="text"
+                        value={replyToComment}
+                        onChange={(e) => setReplyToComment(e.target.value)}
+                        className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Event Color */}
+              <div>
                 <label className="block mb-4 text-sm font-medium text-gray-700 dark:text-gray-400">
                   Event Color
                 </label>
                 <div className="flex flex-wrap items-center gap-4 sm:gap-5">
                   {Object.entries(calendarsEvents).map(([key, value]) => (
                     <div key={key} className="n-chk">
-                      <div
-                        className={`form-check form-check-${value} form-check-inline`}
-                      >
+                      <div className={`form-check form-check-${value} form-check-inline`}>
                         <label
                           className="flex items-center text-sm text-gray-700 form-check-label dark:text-gray-400"
                           htmlFor={`modal${key}`}
@@ -215,36 +457,35 @@ const Calendar: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mt-6">
-                <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                  Enter Start Date
-                </label>
-                <div className="relative">
+              {/* Event Dates */}
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                    Start Date
+                  </label>
                   <input
-                    id="event-start-date"
                     type="date"
                     value={eventStartDate}
                     onChange={(e) => setEventStartDate(e.target.value)}
-                    className="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                    className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                    required
                   />
                 </div>
-              </div>
-
-              <div className="mt-6">
-                <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                  Enter End Date
-                </label>
-                <div className="relative">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                    End Date
+                  </label>
                   <input
-                    id="event-end-date"
                     type="date"
                     value={eventEndDate}
                     onChange={(e) => setEventEndDate(e.target.value)}
-                    className="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                    className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                   />
                 </div>
               </div>
             </div>
+
+            {/* Modal Footer */}
             <div className="flex items-center gap-3 mt-6 modal-footer sm:justify-end">
               <button
                 onClick={closeModal}
