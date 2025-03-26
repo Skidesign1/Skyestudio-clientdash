@@ -1,23 +1,23 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
-import SignIn from "./pages/AuthPages/SignIn";
-import SignUp from "./pages/AuthPages/SignUp";
-import SocialLogin from "./pages/AuthPages/SocialLogin";
-import AuthCallback from "./pages/AuthPages/AuthCallback";
-import Home from "./pages/Dashboard/Home";
+// import { BrowserRouter as Router, Routes, Route } from "react-router";
+// import SignIn from "./pages/AuthPages/SignIn";
+// import SignUp from "./pages/AuthPages/SignUp";
+// import SocialLogin from "./pages/AuthPages/SocialLogin";
+// import AuthCallback from "./pages/AuthPages/AuthCallback";
+// import Home from "./pages/Dashboard/Home";
 
-export default function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/social-login" element={<SocialLogin />} />
-        <Route path="/auth/callback" element={<AuthCallback />} />
-        <Route path="/dashboard" element={<Home />} />
-      </Routes>
-    </Router>
-  );
-}
+// export default function App() {
+//   return (
+//     <Router>
+//       <Routes>
+//         <Route path="/" element={<SignIn />} />
+//         <Route path="/signup" element={<SignUp />} />
+//         <Route path="/social-login" element={<SocialLogin />} />
+//         <Route path="/auth/callback" element={<AuthCallback />} />
+//         <Route path="/dashboard" element={<Home />} />
+//       </Routes>
+//     </Router>
+//   );
+// }
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
