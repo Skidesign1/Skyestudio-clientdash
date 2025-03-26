@@ -6,6 +6,7 @@ import {
   TableRow,
 } from "../ui/table";
 import Badge from "../ui/badge/Badge";
+import { useState } from "react";
 
 // Define the TypeScript interface for the table rows
 interface Product {
@@ -14,9 +15,8 @@ interface Product {
   views: string; // Number of variants (e.g., "1 Variant", "2 Variants")
   likes: number;
   share: number;
-  comment: string; // Category of the product
-  date: string; // Price of the product (as a string with currency symbol)
-  // status: string; // Status of the product
+  comment: number; // Category of the product
+  date: string; 
   image: string; // URL or path to the product image
   status: "Delivered" | "Pending" | "Canceled"; // Status of the product
 }
@@ -26,63 +26,81 @@ const tableData: Product[] = [
   {
     id: 1,
     name: "MacBook Pro 13”",
-    views: " views",
+    views: "200 views",
     likes: 24,
     share: 5,
-    comment: "Great performance!",
-    date: "2023-10-15",
+    comment: 10,
+    date: "15-10-2023",
     status: "Delivered",
     image: "/images/product/product-01.jpg",
   },
   {
     id: 2,
     name: "Apple Watch Ultra",
-    views: "1 views",
+    views: "10 views",
     likes: 18,
     share: 3,
-    comment: "Excellent battery life",
-    date: "2023-11-02",
+    comment: 9,
+    date: "11-02-2024",
     status: "Pending",
     image: "/images/product/product-02.jpg",
   },
   {
     id: 3,
     name: "iPhone 15 Pro Max",
-    views: "2 views",
+    views: "21 views",
     likes: 42,
     share: 12,
-    comment: "Amazing camera quality",
-    date: "2023-09-28",
+    comment: 12,
+    date: "28-09-2023",
     status: "Delivered",
     image: "/images/product/product-03.jpg",
   },
   {
     id: 4,
     name: "iPad Pro 3rd Gen",
-    views: "2 views",
+    views: "102 views",
     likes: 15,
     share: 2,
-    comment: "Perfect for digital artists",
-    date: "2023-08-17",
+    comment: 2,
+    date: "08-07-2025",
     status: "Canceled",
     image: "/images/product/product-04.jpg",
   },
   {
     id: 5,
     name: "AirPods Pro 2nd Gen",
-    views: "1 views",
+    views: "12 views",
     likes: 30,
     share: 8,
-    comment: "Best noise cancellation",
-    date: "2023-12-05",
+    comment: 5,
+    date: "12-05-2023",
     status: "Delivered",
     image: "/images/product/product-05.jpg",
   },
 ];
 
 export default function RecentOrders() {
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 3;
+  const totalPages = Math.ceil(tableData.length / itemsPerPage);
+
+
+  // Handler functions with proper typing
+  const handlePrevious = (): void => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  const handleNext = (): void => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
+
+  const handlePageChange = (page: number): void => {
+    setCurrentPage(page);
+  };
+
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
+    <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
@@ -153,7 +171,7 @@ export default function RecentOrders() {
               </TableCell>
               <TableCell
                 isHeader
-                className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                className="p-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
                 Share
               </TableCell>
@@ -165,7 +183,7 @@ export default function RecentOrders() {
               </TableCell>
               <TableCell
                 isHeader
-                className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                className="p-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
                 Date
               </TableCell>
@@ -205,7 +223,7 @@ export default function RecentOrders() {
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                   {product.likes}
                 </TableCell>
-                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                <TableCell className="p-3 text-gray-500 text-theme-sm dark:text-gray-400">
                   {product.share}
                 </TableCell>
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
@@ -232,6 +250,60 @@ export default function RecentOrders() {
             ))}
           </TableBody>
         </Table>
+       {/* Pagination with TypeScript */}
+       <div className="flex items-center justify-between border-t border-gray-100 dark:border-gray-800 px-4 py-3 sm:px-6">
+          <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm text-gray-700 dark:text-gray-500">
+                Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to{" "}
+                <span className="font-medium">
+                  {Math.min(currentPage * itemsPerPage, tableData.length)}
+                </span>{" "}
+                of <span className="font-medium">{tableData.length}</span> results
+              </p>
+            </div>
+            <div>
+              <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                <button
+                  onClick={handlePrevious}
+                  disabled={currentPage === 1}
+                  className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:ring-gray-700 dark:hover:bg-gray-800"
+                >
+                  <span className="sr-only">Previous</span>
+                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                  </svg>
+                </button>
+                
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page: number) => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    aria-current={currentPage === page ? "page" : undefined}
+                    className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
+                      currentPage === page
+                        ? "  text-gray-800 dark:text-white focus:z-20 focus-visible:outline focus-visible:outline-offset-2"
+                        : "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-gray-800"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+                
+                <button
+                  onClick={handleNext}
+                  disabled={currentPage === totalPages}
+                  className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:ring-gray-700 dark:hover:bg-gray-800"
+                >
+                  <span className="sr-only">Next</span>
+                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </nav>
+            </div>
+          </div>
+        </div>
       </div>
       
     </div>

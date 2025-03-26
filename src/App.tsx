@@ -38,11 +38,10 @@ import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
-// import MonthlyTargetIG from "./components/ecommerce/MonthlyTargetIG";
-// import MonthlyTargetTikTok from "./components/ecommerce/MonthlyTargetTikTok";
-// import MonthlyTargetThreads from "./components/ecommerce/MonthlyTargetThreads";
+import MonthlyTargetIG from "./components/ecommerce/MonthlyTargetIG";
+import MonthlyTargetTikTok from "./components/ecommerce/MonthlyTargetTikTok";
+import MonthlyTargetThreads from "./components/ecommerce/MonthlyTargetThreads";
 import Onboading from "./pages/AuthPages/Onboarding";
-import MonthlyTarget from "./components/ecommerce/MonthlyTarget";
 
 export default function App() {
   return (
@@ -55,17 +54,17 @@ export default function App() {
             <Route
               index
               path="/dashboard/IG"
-              element={<Home>{<MonthlyTarget/>}</Home>}
+              element={<Home>{<MonthlyTargetIG/>}</Home>}
             />
             <Route
               index
               path="/dashboard/TikTok"
-              element={<Home>{<MonthlyTarget />}</Home>}
+              element={<Home>{<MonthlyTargetTikTok />}</Home>}
             />
             <Route
               index
               path="/dashboard/Threads"
-              element={<Home>{<MonthlyTarget />}</Home>}
+              element={<Home>{<MonthlyTargetThreads />}</Home>}
             />
 
             {/* Others Page */}
