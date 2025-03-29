@@ -1,4 +1,3 @@
-import React from "react";
 
 const SocialLogin = () => {
   const handleLogin = (platform: string) => {

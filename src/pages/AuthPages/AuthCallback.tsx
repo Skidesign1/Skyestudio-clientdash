@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+
 
 const AuthCallback = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigat();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
