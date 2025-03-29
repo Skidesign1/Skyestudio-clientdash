@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 
 const AuthCallback = () => {
-  const navigate = useNavigat();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
