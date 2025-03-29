@@ -1,8 +1,11 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 const AuthCallback = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  
+
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
